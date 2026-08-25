@@ -1,0 +1,1024 @@
+{
+  "name": "Telegram Multi-Source Varied Tech Jobs Alert - No AI",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "5d619f16-bad2-4be6-9844-cdf6e1cb6277",
+      "name": "Run Manually",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1250,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 3
+            }
+          ]
+        }
+      },
+      "id": "d1d21481-2383-4ec9-9a5d-ba333ed05dcc",
+      "name": "Every 3 Hours",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1250,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cfg-1",
+              "name": "telegramBotToken",
+              "value": "PASTE_TELEGRAM_BOT_TOKEN_HERE",
+              "type": "string"
+            },
+            {
+              "id": "cfg-2",
+              "name": "telegramChatId",
+              "value": "PASTE_TELEGRAM_CHAT_ID_HERE",
+              "type": "string"
+            },
+            {
+              "id": "cfg-3",
+              "name": "keywords",
+              "value": "software engineer,backend,frontend,front-end,fullstack,full-stack,node.js,nodejs,typescript,nestjs,react,next.js,golang,go developer,mobile,android,ios,flutter,react native,devops,cloud,platform engineer,sre,site reliability,qa,quality assurance,test engineer,automation engineer,data engineer,data analyst,data scientist,cybersecurity,security engineer,it support,technical support,product manager,product engineer,ui ux,ux designer,web developer",
+              "type": "string"
+            },
+            {
+              "id": "cfg-4",
+              "name": "allowedLocations",
+              "value": "worldwide,anywhere,global,remote,asia,south-eastern asia,southeast asia,indonesia,jakarta,singapore,australia",
+              "type": "string"
+            },
+            {
+              "id": "cfg-5",
+              "name": "maxJobsPerRun",
+              "value": 30,
+              "type": "number"
+            },
+            {
+              "id": "cfg-6",
+              "name": "maxStoredJobKeys",
+              "value": 5000,
+              "type": "number"
+            },
+            {
+              "id": "cfg-7",
+              "name": "linkedinKeywords",
+              "value": "software engineer",
+              "type": "string"
+            },
+            {
+              "id": "cfg-8",
+              "name": "maxJobsPerCategory",
+              "value": 3,
+              "type": "number"
+            },
+            {
+              "id": "cfg-9",
+              "name": "includeTechAdjacent",
+              "value": true,
+              "type": "boolean"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "390449e9-90f4-492e-95d6-51ae0d968fb8",
+      "name": "CONFIG - EDIT ME",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1030,
+        -60
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://remotive.com/api/remote-jobs",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "limit",
+              "value": "100"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "1874a215-24f2-417c-8c4c-bf36c625c7f3",
+      "name": "Fetch Remotive",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -800,
+        -420
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://remoteok.com/api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 n8n-job-alert/1.0"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "12a6dd46-d28b-4875-916d-36069947cff6",
+      "name": "Fetch RemoteOK",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -800,
+        -260
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://www.arbeitnow.com/api/job-board-api",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "ce4db244-33d2-42d3-b34c-8d8038371f5b",
+      "name": "Fetch Arbeitnow",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -800,
+        -100
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://weworkremotely.com/categories/remote-programming-jobs.rss"
+      },
+      "id": "d800074e-44fc-4ba6-9121-2e8bcf4186bc",
+      "name": "Fetch WeWorkRemotely RSS",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.1,
+      "position": [
+        -800,
+        60
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords={{ encodeURIComponent($('CONFIG - EDIT ME').first().json.linkedinKeywords) }}&location=Indonesia&f_WT=2&start=0",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/151 Safari/537.36"
+            },
+            {
+              "name": "Accept-Language",
+              "value": "en-US,en;q=0.9"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000,
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          }
+        }
+      },
+      "id": "50b0e3c2-87e1-481f-a81e-3c3e2b8defe2",
+      "name": "Fetch LinkedIn Indonesia",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -800,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords={{ encodeURIComponent($('CONFIG - EDIT ME').first().json.linkedinKeywords) }}&location=Singapore&f_WT=2&start=0",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/151 Safari/537.36"
+            },
+            {
+              "name": "Accept-Language",
+              "value": "en-US,en;q=0.9"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000,
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          }
+        }
+      },
+      "id": "92c88ceb-2e30-4944-b311-8560b14ea249",
+      "name": "Fetch LinkedIn Singapore",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -800,
+        380
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords={{ encodeURIComponent($('CONFIG - EDIT ME').first().json.linkedinKeywords) }}&location=Australia&f_WT=2&start=0",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/151 Safari/537.36"
+            },
+            {
+              "name": "Accept-Language",
+              "value": "en-US,en;q=0.9"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000,
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          }
+        }
+      },
+      "id": "c70a8809-dea2-4a86-a78d-ee78d10ba912",
+      "name": "Fetch LinkedIn Australia",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -800,
+        540
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const p=$input.first().json; const a=Array.isArray(p.jobs)?p.jobs:[];\nreturn a.map(j=>({json:{id:String(j.id||j.url),title:j.title||'',company:j.company_name||'',location:j.candidate_required_location||'Remote',jobType:j.job_type||'',salary:j.salary||'',tags:Array.isArray(j.tags)?j.tags:[],publishedAt:j.publication_date||'',url:j.url||'',source:'Remotive',description:j.description||''}}));"
+      },
+      "id": "89c3814a-44a3-45a9-9b35-6ddc35e07015",
+      "name": "Normalize Remotive",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -540,
+        -420
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw=$input.first().json; const a=Array.isArray(raw)?raw:(Array.isArray(raw.data)?raw.data:[]);\nreturn a.filter(j=>j&&j.position).map(j=>({json:{id:String(j.id||j.url),title:j.position||'',company:j.company||'',location:j.location||'Remote',jobType:'Remote',salary:j.salary||'',tags:Array.isArray(j.tags)?j.tags:[],publishedAt:j.date||j.epoch||'',url:j.url||j.apply_url||'',source:'RemoteOK',description:j.description||''}}));"
+      },
+      "id": "4b9a12e5-1dfa-41b1-9b7b-9fca3a261daf",
+      "name": "Normalize RemoteOK",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -540,
+        -260
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const p=$input.first().json; const a=Array.isArray(p.data)?p.data:[];\nreturn a.map(j=>({json:{id:String(j.slug||j.url),title:j.title||'',company:j.company_name||'',location:j.location||'Remote',jobType:j.remote?'Remote':'',salary:'',tags:Array.isArray(j.tags)?j.tags:[],publishedAt:j.created_at||'',url:j.url||'',source:'Arbeitnow',description:j.description||''}}));"
+      },
+      "id": "6f2b90f6-ce5d-413b-aecf-7c8db9574982",
+      "name": "Normalize Arbeitnow",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -540,
+        -100
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all().map(i=>{const j=i.json||{}; const t=j.title||''; const parts=t.split(':'); return {json:{id:String(j.guid||j.link||t),title:(parts.length>1?parts.slice(1).join(':'):t).trim(),company:(parts.length>1?parts[0]:'').trim(),location:'Remote',jobType:'Remote',salary:'',tags:[],publishedAt:j.isoDate||j.pubDate||'',url:j.link||'',source:'WeWorkRemotely',description:j.contentSnippet||j.content||''}}});"
+      },
+      "id": "385fabe9-5c96-4512-9ce5-6ca72e5f2695",
+      "name": "Normalize WeWorkRemotely",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -540,
+        60
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const cfg=$('CONFIG - EDIT ME').first().json;\nconst first=$input.first().json;\nconst html=typeof first==='string'?first:(first.body||first.data||first.html||JSON.stringify(first));\nconst decode=s=>String(s||'').replace(/&amp;/g,'&').replace(/&#x27;|&#39;/g,\"'\").replace(/&quot;/g,'\\\"').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/<[^>]+>/g,' ').replace(/\\s+/g,' ').trim();\nconst out=[];\nconst blocks=String(html).split(/<li>/i).slice(1);\nfor(const b of blocks){\n const id=(b.match(/data-entity-urn=\\\"urn:li:jobPosting:(\\d+)/i)||[])[1]||'';\n const href=decode((b.match(/base-card__full-link[^>]*href=\\\"([^\\\"]+)/i)||[])[1]||'');\n const title=decode((b.match(/base-search-card__title[^>]*>([\\s\\S]*?)<\\//i)||[])[1]||'');\n const company=decode((b.match(/base-search-card__subtitle[^>]*>[\\s\\S]*?<a[^>]*>([\\s\\S]*?)<\\/a>/i)||[])[1]||(b.match(/base-search-card__subtitle[^>]*>([\\s\\S]*?)<\\//i)||[])[1]||'');\n const location=decode((b.match(/job-search-card__location[^>]*>([\\s\\S]*?)<\\//i)||[])[1]||'Remote');\n const dt=(b.match(/datetime=\\\"([^\\\"]+)/i)||[])[1]||'';\n if(title&&href) out.push({json:{id:String(id||href),title,company,location,jobType:'Remote',salary:'',tags:[],publishedAt:dt,url:href.split('?')[0],source:'LinkedIn',description:''}});\n}\nreturn out;"
+      },
+      "id": "3d3c2f74-2649-4b6a-8808-559d28a3cc1c",
+      "name": "Normalize LinkedIn Indonesia",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -540,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const cfg=$('CONFIG - EDIT ME').first().json;\nconst first=$input.first().json;\nconst html=typeof first==='string'?first:(first.body||first.data||first.html||JSON.stringify(first));\nconst decode=s=>String(s||'').replace(/&amp;/g,'&').replace(/&#x27;|&#39;/g,\"'\").replace(/&quot;/g,'\\\"').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/<[^>]+>/g,' ').replace(/\\s+/g,' ').trim();\nconst out=[];\nconst blocks=String(html).split(/<li>/i).slice(1);\nfor(const b of blocks){\n const id=(b.match(/data-entity-urn=\\\"urn:li:jobPosting:(\\d+)/i)||[])[1]||'';\n const href=decode((b.match(/base-card__full-link[^>]*href=\\\"([^\\\"]+)/i)||[])[1]||'');\n const title=decode((b.match(/base-search-card__title[^>]*>([\\s\\S]*?)<\\//i)||[])[1]||'');\n const company=decode((b.match(/base-search-card__subtitle[^>]*>[\\s\\S]*?<a[^>]*>([\\s\\S]*?)<\\/a>/i)||[])[1]||(b.match(/base-search-card__subtitle[^>]*>([\\s\\S]*?)<\\//i)||[])[1]||'');\n const location=decode((b.match(/job-search-card__location[^>]*>([\\s\\S]*?)<\\//i)||[])[1]||'Remote');\n const dt=(b.match(/datetime=\\\"([^\\\"]+)/i)||[])[1]||'';\n if(title&&href) out.push({json:{id:String(id||href),title,company,location,jobType:'Remote',salary:'',tags:[],publishedAt:dt,url:href.split('?')[0],source:'LinkedIn',description:''}});\n}\nreturn out;"
+      },
+      "id": "56a34722-7b67-4dca-b0a9-c75eae04b1ae",
+      "name": "Normalize LinkedIn Singapore",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -540,
+        380
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const cfg=$('CONFIG - EDIT ME').first().json;\nconst first=$input.first().json;\nconst html=typeof first==='string'?first:(first.body||first.data||first.html||JSON.stringify(first));\nconst decode=s=>String(s||'').replace(/&amp;/g,'&').replace(/&#x27;|&#39;/g,\"'\").replace(/&quot;/g,'\\\"').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/<[^>]+>/g,' ').replace(/\\s+/g,' ').trim();\nconst out=[];\nconst blocks=String(html).split(/<li>/i).slice(1);\nfor(const b of blocks){\n const id=(b.match(/data-entity-urn=\\\"urn:li:jobPosting:(\\d+)/i)||[])[1]||'';\n const href=decode((b.match(/base-card__full-link[^>]*href=\\\"([^\\\"]+)/i)||[])[1]||'');\n const title=decode((b.match(/base-search-card__title[^>]*>([\\s\\S]*?)<\\//i)||[])[1]||'');\n const company=decode((b.match(/base-search-card__subtitle[^>]*>[\\s\\S]*?<a[^>]*>([\\s\\S]*?)<\\/a>/i)||[])[1]||(b.match(/base-search-card__subtitle[^>]*>([\\s\\S]*?)<\\//i)||[])[1]||'');\n const location=decode((b.match(/job-search-card__location[^>]*>([\\s\\S]*?)<\\//i)||[])[1]||'Remote');\n const dt=(b.match(/datetime=\\\"([^\\\"]+)/i)||[])[1]||'';\n if(title&&href) out.push({json:{id:String(id||href),title,company,location,jobType:'Remote',salary:'',tags:[],publishedAt:dt,url:href.split('?')[0],source:'LinkedIn',description:''}});\n}\nreturn out;"
+      },
+      "id": "3c855183-556b-47eb-92a4-d28d4b235636",
+      "name": "Normalize LinkedIn Australia",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -540,
+        540
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "append"
+      },
+      "id": "4a7a18aa-ad5e-4ecb-bdee-31ef85070155",
+      "name": "Merge Sources 1",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        -250,
+        -130
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "append"
+      },
+      "id": "ecc44f95-d362-439c-9dd2-fe75c8f902b8",
+      "name": "Merge Sources 2",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        -250,
+        -10
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "append"
+      },
+      "id": "5c1fc046-0a01-4b1c-8c35-729474d3ecb3",
+      "name": "Merge Sources 3",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        -250,
+        110
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "append"
+      },
+      "id": "eb3b497d-2976-4bf9-b455-5acdbed9b156",
+      "name": "Merge Sources 4",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        -250,
+        230
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "append"
+      },
+      "id": "c82ec382-9ac7-4f12-b857-aad647266f50",
+      "name": "Merge Sources 5",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        -250,
+        350
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "append"
+      },
+      "id": "3985b21c-c594-479b-9887-ba229b0bea13",
+      "name": "Merge Sources 6",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        -250,
+        470
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const cfg=$('CONFIG - EDIT ME').first().json;\nconst keywords=String(cfg.keywords||'').split(',').map(x=>x.trim().toLowerCase()).filter(Boolean);\nconst allowed=String(cfg.allowedLocations||'').split(',').map(x=>x.trim().toLowerCase()).filter(Boolean);\nconst maxTotal=Number(cfg.maxJobsPerRun||30);\nconst maxPerCategory=Number(cfg.maxJobsPerCategory||3);\nconst strip=s=>String(s||'').replace(/<style[\\s\\S]*?<\\/style>/gi,' ').replace(/<script[\\s\\S]*?<\\/script>/gi,' ').replace(/<[^>]*>/g,' ').replace(/&nbsp;/gi,' ').replace(/&amp;/gi,'&').replace(/\\s+/g,' ').trim();\nconst locOk=loc=>{const l=String(loc||'remote').toLowerCase(); return !allowed.length||allowed.some(x=>l.includes(x))||l.includes('remote')||l.includes('worldwide')||l.includes('anywhere');};\nconst keywordOk=j=>{const h=[j.title,j.company,j.location,(j.tags||[]).join(' '),strip(j.description)].join(' ').toLowerCase(); return !keywords.length||keywords.some(k=>h.includes(k));};\nconst classify=j=>{const h=[j.title,(j.tags||[]).join(' '),strip(j.description)].join(' ').toLowerCase(); const rules=[\n['Backend',/backend|back-end|node\\.?js|nestjs|golang|go engineer|api engineer/],\n['Frontend',/frontend|front-end|react|next\\.?js|vue|angular|web ui/],\n['Full Stack',/full[ -]?stack|fullstack/],\n['Mobile',/mobile|android|ios|flutter|react native/],\n['DevOps / Cloud',/devops|platform engineer|cloud engineer|site reliability|\\bsre\\b|kubernetes|infrastructure/],\n['QA / Testing',/quality assurance|\\bqa\\b|test engineer|automation engineer|sdet/],\n['Data',/data engineer|data analyst|data scientist|analytics engineer|machine learning|ml engineer/],\n['Security',/security engineer|cybersecurity|cyber security|application security|cloud security|soc analyst/],\n['Product',/product manager|product engineer|technical product/],\n['Design / UX',/ui[ \\/-]?ux|ux designer|product designer|ui designer/],\n['IT / Support',/it support|technical support|support engineer|systems administrator|sysadmin/],\n['Software Engineer',/software engineer|software developer|developer|programmer/]\n]; for(const [name,re] of rules) if(re.test(h)) return name; return 'Other Tech';};\nconst seen=new Set(); const rows=[];\nfor(const i of $input.all()){const j=i.json||{}; if(!j.title||!j.url||!keywordOk(j)||!locOk(j.location)) continue; const k=[j.title,j.company].join('|').toLowerCase().replace(/[^a-z0-9|]+/g,' ').trim(); if(seen.has(k)) continue; seen.add(k); j.category=classify(j); rows.push(i);}\nrows.sort((a,b)=>new Date(b.json.publishedAt||0)-new Date(a.json.publishedAt||0));\nconst buckets={}; for(const i of rows){(buckets[i.json.category]??=[]).push(i);}\nconst order=['Backend','Frontend','Full Stack','Mobile','DevOps / Cloud','QA / Testing','Data','Security','Product','Design / UX','IT / Support','Software Engineer','Other Tech'];\nconst result=[]; let round=0;\nwhile(result.length<maxTotal){let added=false; for(const cat of order){const arr=buckets[cat]||[]; if(round<maxPerCategory && arr[round]){result.push(arr[round]); added=true; if(result.length>=maxTotal) break;}} if(!added||round>=maxPerCategory-1) break; round++;}\nif(result.length<maxTotal){const used=new Set(result.map(x=>x.json.source+'|'+x.json.id)); for(const i of rows){const k=i.json.source+'|'+i.json.id; if(used.has(k)) continue; result.push(i); used.add(k); if(result.length>=maxTotal) break;}}\nreturn result;"
+      },
+      "id": "4533fc8c-6860-46b7-b35a-ab97d5ba162b",
+      "name": "Filter + Cross-source Dedupe",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        80,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const cfg=$('CONFIG - EDIT ME').first().json; const store=$getWorkflowStaticData('global'); if(!Array.isArray(store.sentJobKeys)) store.sentJobKeys=[]; const sent=new Set(store.sentJobKeys); const fresh=[]; for(const item of $input.all()){const j=item.json; const key=[j.title,j.company,j.url].join('|').toLowerCase(); if(!sent.has(key)){fresh.push(item); sent.add(key);}} store.sentJobKeys=Array.from(sent).slice(-Number(cfg.maxStoredJobKeys||5000)); return fresh;"
+      },
+      "id": "995fee92-a684-4ccb-8302-e71f0b13ee42",
+      "name": "Skip Already Sent",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        330,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const esc=v=>String(v||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');\nreturn $input.all().map(item=>{const j=item.json; const salary=j.salary?`\\n\ud83d\udcb0 <b>Salary:</b> ${esc(j.salary)}`:''; const published=j.publishedAt?esc(String(j.publishedAt)):'Unknown'; const msg=`\ud83e\udded <b>NEW JOB \u2014 ${esc(j.category||'Tech')}</b>\\n\\n\ud83d\udcbc <b>${esc(j.title)}</b>\\n\ud83c\udfe2 ${esc(j.company||'Unknown company')}\\n\ud83d\udccd ${esc(j.location||'Remote')}\\n\ud83e\uddfe ${esc(j.jobType||'Not specified')}${salary}\\n\\n\ud83d\udd52 <b>Published:</b> ${published}\\n\ud83c\udf10 <b>Source:</b> ${esc(j.source)}\\n\\n\ud83d\udd17 <a href=\\\"${esc(j.url)}\\\">Open & Apply</a>`; return {json:{...j,telegramMessage:msg}};});"
+      },
+      "id": "3dd47b66-6e61-4bd9-bb4f-6959c53699c7",
+      "name": "Format Telegram Message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        570,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.telegram.org/bot{{ $('CONFIG - EDIT ME').first().json.telegramBotToken }}/sendMessage",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({ chat_id: $('CONFIG - EDIT ME').first().json.telegramChatId, text: $json.telegramMessage, parse_mode: 'HTML', disable_web_page_preview: true }) }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "251fe068-0671-493c-8740-c6d2ebbc21e2",
+      "name": "Send Telegram Alert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        810,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://jobicy.com/api/v2/remote-jobs",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "count",
+              "value": "100"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "589b0322-9c37-4cad-bbaa-055eedaa55bd",
+      "name": "Fetch Jobicy",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -800,
+        700
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const p=$input.first().json||{}; const jobs=Array.isArray(p.jobs)?p.jobs:[]; return jobs.map(j=>({json:{id:String(j.id||j.url||j.jobTitle),title:j.jobTitle||'',company:j.companyName||'',location:j.jobGeo||'Remote',jobType:Array.isArray(j.jobType)?j.jobType.join(', '):(j.jobType||''),salary:[j.annualSalaryMin,j.annualSalaryMax].filter(v=>v!==undefined&&v!==null).join(' - '),tags:[...(Array.isArray(j.jobIndustry)?j.jobIndustry:[]),j.jobLevel].filter(Boolean),publishedAt:j.pubDate||'',url:j.url||'',source:'Jobicy',description:j.jobDescription||j.jobExcerpt||''}}));"
+      },
+      "id": "193f79c3-2abf-4ee5-ac86-c0d08469cc93",
+      "name": "Normalize Jobicy",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -540,
+        700
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://himalayas.app/jobs/api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "limit",
+              "value": "20"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "89b86586-f611-4b19-a23a-4f927e00777a",
+      "name": "Fetch Himalayas",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -800,
+        860
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const p=$input.first().json||{}; const jobs=Array.isArray(p.jobs)?p.jobs:[]; return jobs.map(j=>{const loc=Array.isArray(j.locationRestrictions)&&j.locationRestrictions.length?j.locationRestrictions.map(x=>x.name||x.alpha2||x.slug).filter(Boolean).join(', '):'Worldwide / Remote'; const sal=(j.minSalary||j.maxSalary)?`${j.currency||''} ${j.minSalary||''}${j.minSalary&&j.maxSalary?' - ':''}${j.maxSalary||''} ${j.salaryPeriod||''}`.trim():''; return {json:{id:String(j.guid||j.applicationLink||j.title),title:j.title||'',company:j.companyName||'',location:loc,jobType:j.employmentType||'',salary:sal,tags:[...(Array.isArray(j.categories)?j.categories:[]),...(Array.isArray(j.parentCategories)?j.parentCategories:[]),...(Array.isArray(j.seniority)?j.seniority:[])],publishedAt:j.pubDate||'',url:j.applicationLink||'',source:'Himalayas',description:j.description||j.excerpt||''}}});"
+      },
+      "id": "a1d88737-f30c-4ff4-b0c7-bbf221f991d9",
+      "name": "Normalize Himalayas",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -540,
+        860
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "append"
+      },
+      "id": "39e9e331-9156-4658-96a8-09f81365e6a7",
+      "name": "Merge Sources 7",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -250,
+        590
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "append"
+      },
+      "id": "abf97ea7-de71-4553-9024-ab95a93164da",
+      "name": "Merge Sources 8",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -250,
+        710
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Run Manually": {
+      "main": [
+        [
+          {
+            "node": "CONFIG - EDIT ME",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Every 3 Hours": {
+      "main": [
+        [
+          {
+            "node": "CONFIG - EDIT ME",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG - EDIT ME": {
+      "main": [
+        [
+          {
+            "node": "Fetch Remotive",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch RemoteOK",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Arbeitnow",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch WeWorkRemotely RSS",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch LinkedIn Indonesia",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch LinkedIn Singapore",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch LinkedIn Australia",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Jobicy",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Himalayas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Remotive": {
+      "main": [
+        [
+          {
+            "node": "Normalize Remotive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch RemoteOK": {
+      "main": [
+        [
+          {
+            "node": "Normalize RemoteOK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Arbeitnow": {
+      "main": [
+        [
+          {
+            "node": "Normalize Arbeitnow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch WeWorkRemotely RSS": {
+      "main": [
+        [
+          {
+            "node": "Normalize WeWorkRemotely",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch LinkedIn Indonesia": {
+      "main": [
+        [
+          {
+            "node": "Normalize LinkedIn Indonesia",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch LinkedIn Singapore": {
+      "main": [
+        [
+          {
+            "node": "Normalize LinkedIn Singapore",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch LinkedIn Australia": {
+      "main": [
+        [
+          {
+            "node": "Normalize LinkedIn Australia",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Remotive": {
+      "main": [
+        [
+          {
+            "node": "Merge Sources 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize RemoteOK": {
+      "main": [
+        [
+          {
+            "node": "Merge Sources 1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Sources 1": {
+      "main": [
+        [
+          {
+            "node": "Merge Sources 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Arbeitnow": {
+      "main": [
+        [
+          {
+            "node": "Merge Sources 2",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Sources 2": {
+      "main": [
+        [
+          {
+            "node": "Merge Sources 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize WeWorkRemotely": {
+      "main": [
+        [
+          {
+            "node": "Merge Sources 3",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Sources 3": {
+      "main": [
+        [
+          {
+            "node": "Merge Sources 4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize LinkedIn Indonesia": {
+      "main": [
+        [
+          {
+            "node": "Merge Sources 4",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Sources 4": {
+      "main": [
+        [
+          {
+            "node": "Merge Sources 5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize LinkedIn Singapore": {
+      "main": [
+        [
+          {
+            "node": "Merge Sources 5",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Sources 5": {
+      "main": [
+        [
+          {
+            "node": "Merge Sources 6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize LinkedIn Australia": {
+      "main": [
+        [
+          {
+            "node": "Merge Sources 6",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Sources 6": {
+      "main": [
+        [
+          {
+            "node": "Merge Sources 7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter + Cross-source Dedupe": {
+      "main": [
+        [
+          {
+            "node": "Skip Already Sent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Skip Already Sent": {
+      "main": [
+        [
+          {
+            "node": "Format Telegram Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Telegram Message": {
+      "main": [
+        [
+          {
+            "node": "Send Telegram Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Jobicy": {
+      "main": [
+        [
+          {
+            "node": "Normalize Jobicy",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Himalayas": {
+      "main": [
+        [
+          {
+            "node": "Normalize Himalayas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Jobicy": {
+      "main": [
+        [
+          {
+            "node": "Merge Sources 7",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Sources 7": {
+      "main": [
+        [
+          {
+            "node": "Merge Sources 8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Himalayas": {
+      "main": [
+        [
+          {
+            "node": "Merge Sources 8",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Sources 8": {
+      "main": [
+        [
+          {
+            "node": "Filter + Cross-source Dedupe",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "17f19f74-1d26-49c9-8baa-a507a3326d0f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "description": "Multi-source varied technology job alerts: LinkedIn, Remotive, RemoteOK, Arbeitnow, WeWorkRemotely, Jobicy, Himalayas. Category-balanced output."
+  },
+  "tags": []
+}
